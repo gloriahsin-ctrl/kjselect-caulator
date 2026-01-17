@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KJ Select 代購換算器</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", sans-serif;
+  background: #f4f1ec;
+  margin: 0;
+  padding: 16px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 18px;
+  color: #5a4a42;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #7a665c;
+}
+
+label {
+  font-size: 13px;
+  color: #666;
+}
+
+input, select {
+  width: 100%;
+  padding: 11px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.result {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2f6f5e;
+  text-align: right;
+}
+
+.result-small {
+  font-size: 14px;
+  color: #888;
+  text-align: right;
+}
+
+.total {
+  font-size: 22px;
+  color: #c46a4a;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  background: #c8b6a6;
+  color: #fff;
+}
+</style>
+</head>
+
+<body>
+
+<h1>KJ Select 代購換算器</h1>
+
+<div class="card">
+  <div class="section-title">① 商品價格</div>
+  <label>商品原價（韓元）</label>
+  <input type="number" id="krw">
+
+  <label>匯率</label>
+  <input type="number" id="rate" value="46">
+
+  <div class="result-small" id="twd">≈ NT$ 0</div>
+</div>
+
+<div class="card">
+  <div class="section-title">② 退稅計算</div>
+  <label>退稅比例</label>
+  <select id="tax">
+    <option value="0.07">7%</option>
+    <option value="0.08">8%</option>
+  </select>
+
+  <div class="result" id="afterTax">退稅後：0 韓元</div>
+</div>
+
+<div class="card">
+  <div class="section-title">③ 運費</div>
+  <label>重量（g）</label>
+  <input type="number" id="weight" placeholder="例如 180">
+
+  <div class="result" id="shipping">運費：0 韓元</div>
+</div>
+
+<div class="card">
+  <div class="section-title">④ 總成本</div>
+  <div class="result total" id="totalKrw">0 韓元</div>
+  <div class="result-small" id="totalTwd">≈ NT$ 0</div>
+</div>
+
+<button onclick="resetAll()">一鍵清空重新計算</button>
+
+<script>
+const krwInput = document.getElementById('krw');
+const rateInput = document.getElementById('rate');
+const taxSelect = document.getElementById('tax');
+const weightInput = document.getElementById('weight');
+
+function calculate() {
+  const krw = Number(krwInput.value) || 0;
+  const rate = Number(rateInput.value) || 46;
+  const tax = Number(taxSelect.value);
+  const weight = Number(weightInput.value) || 0;
+
+  const twd = krw / rate;
+  const afterTax = krw * (1 - tax);
+  const shipping = weight * 5.5;
+  const total = afterTax + shipping;
+  const totalTwd = total / rate;
+
+  document.getElementById('twd').innerText = `≈ NT$ ${twd.toFixed(0)}`;
+  document.getElementById('afterTax').innerText = `退稅後：${afterTax.toFixed(0)} 韓元`;
+  document.getElementById('shipping').innerText = `運費：${shipping.toFixed(0)} 韓元`;
+  document.getElementById('totalKrw').innerText = `${total.toFixed(0)} 韓元`;
+  document.getElementById('totalTwd').innerText = `≈ NT$ ${totalTwd.toFixed(0)}`;
+}
+
+function resetAll() {
+  krwInput.value = '';
+  weightInput.value = '';
+  calculate();
+}
+
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', calculate);
+});
+</script>
+
+</body>
+</html>
